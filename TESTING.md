@@ -23,6 +23,9 @@ python3 TCP_server.py
 ```
 
 ### Étape 2 : Lancer le Client
+
+**Option A : Utiliser le script Python**
+
 Ouvrez un Terminal 2 et lancez le client.
 
 ```bash
@@ -31,12 +34,23 @@ python3 TCP_client.py
 # Résultat Client : Doit afficher la réponse reçue (ex: ACK)
 ```
 
+**Option B : Utiliser Netcat comme client**
+
+Alternativement, vous pouvez utiliser Netcat pour tester le serveur.
+
+```bash
+nc 127.0.0.1 9998
+
+# Puis tapez un message et faites Entrée
+# Résultat : Le serveur vous répondra et vous verrez sa réponse
+```
+
 ### Vérification finale (Terminal 1)
 
 ```
 # Le Serveur doit afficher : 
 # [*] Accepted connection from 127.0.0.1:xxxxx
-# [*] Received: Salut Serveur! C'est Achraf.
+# [*] Received: <votre message>
 ```
 
 ---
