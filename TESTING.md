@@ -18,3 +18,12 @@ Ouvrez un premier terminal et lancez le serveur qui va écouter sur le port 9998
 ```bash
 python3 TCP_server.py
 # Résultat attendu : [*] Listening on 0.0.0.0:9998
+
+**Étape 2 : Lancer le Client** Ouvrez un Terminal 2 et lancez le client.
+```bash
+python3 TCP_client.py
+
+#Résultat :
+#    Le Client doit afficher la réponse reçue (ex: ACK).
+
+#    Le Serveur doit afficher : [*] Accepted connection from... suivi du message Salut Serveur!.
