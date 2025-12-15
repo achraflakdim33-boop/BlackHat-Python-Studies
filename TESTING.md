@@ -86,6 +86,46 @@ Le script Python attend une réponse pour finir.
 
 ---
 
+## 3. Tester le Remplaçant Netcat (BHP Net Tool)
+
+Ce script (`netcat.py`) peut agir comme un serveur ou un client. Voici comment tester sa fonction "Command Shell" (le plus utile).
+
+### Scénario : Créer un Shell Distant
+
+### Étape 1 : Lancer le "Serveur" (La Victime)
+Dans le Terminal 1, nous lançons le script en mode écoute (`-l`), sur le port 5555 (`-p`), et nous activons le shell de commande (`-c`).
+
+```bash
+python3 netcat.py -l -p 5555 -c
+
+# Résultat attendu : Le script attend en silence (listening)
+```
+
+### Étape 2 : Se Connecter depuis un Client
+Dans le Terminal 2, connectez-vous au serveur avec Netcat.
+
+```bash
+nc 127.0.0.1 5555
+
+# Vous obtenez un prompt : BHP:#>
+```
+
+### Étape 3 : Exécuter des Commandes
+Tapez des commandes système dans le Terminal 2.
+
+```bash
+BHP:#> ls
+BHP:#> pwd
+BHP:#> whoami
+
+# Les résultats s'affichent dans votre terminal client
+```
+
+### Notes de Sécurité
+⚠️ **Attention** : Ce script donne un accès shell complet à votre système. Ne l'utilisez que dans un environnement de test contrôlé.
+
+---
+
 ## Résumé des Ports Utilisés
 
 | Script | Type | Port |
@@ -93,6 +133,7 @@ Le script Python attend une réponse pour finir.
 | TCP_server.py | TCP | 9998 |
 | TCP_client.py | TCP | 9998 |
 | UDP_client.py | UDP | 9997 |
+| netcat.py | TCP | 5555 (configurable) |
 
 ---
 
