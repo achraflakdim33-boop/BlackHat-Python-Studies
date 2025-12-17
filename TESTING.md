@@ -126,6 +126,80 @@ BHP:#> whoami
 
 ---
 
+## 3. Tester le Proxy TCP (Interception & Modification)
+
+Ce test vérifie que le proxy peut non seulement lire le trafic, mais aussi le modifier à la volée (attaque Man-in-the-Middle).
+
+**Prérequis :** Avoir modifié la fonction `request_handler` dans `proxy.py` pour remplacer "Secret" par "Hacke!".
+
+### Étape 1 : Lancer le Serveur TCP
+Ouvrez un **Terminal 1** (La Cible).
+
+```bash
+python3 TCP_server.py
+
+# Résultat : [*] Listening on 0.0.0.0:9998
+```
+
+### Étape 2 : Lancer le Proxy
+Ouvrez un **Terminal 2** (L'Attaquant). On redirige le port 9999 vers le port 9998.
+
+```bash
+# Syntaxe : [LocalHost] [LocalPort] [RemoteHost] [RemotePort] [ReceiveFirst]
+python3 proxy.py 127.0.0.1 9999 127.0.0.1 9998 False
+
+# Résultat : [*] Listening on 127.0.0.1:9999
+```
+
+### Étape 3 : Lancer le Client
+Ouvrez un **Terminal 3** (La Victime) et connectez-vous au Proxy (9999).
+
+```bash
+nc 127.0.0.1 9999
+```
+
+Tapez ensuite le message suivant et faites Entrée : `Ceci est un Secret`
+
+### Vérification (Résultats)
+* **Terminal 2 (Proxy)** : Vous voyez le trafic en hexdump. Il affiche `[!!] MOT SECRET DETECTE ! Modification du paquet...`.
+* **Terminal 1 (Serveur)** : Le serveur reçoit le message modifié : `[*] Received: Ceci est un Hacke!`
+
+---
+
+## 4. Tester le Proxy FTP (Protocole Complexe)
+
+Ce test vérifie que le proxy gère les protocoles où le serveur parle en premier (comme FTP). Nous utiliserons un serveur FTP public (ex: `ftp.sun.ac.za` ou `ftp.gnu.org`).
+
+### Étape 1 : Lancer le Proxy en mode Root
+Ouvrez un **Terminal 1**. Nous utilisons `sudo` car le port 21 est privilégié.
+
+```bash
+# Redirige le port 21 local vers le port 21 du serveur FTP public
+sudo python3 proxy.py 127.0.0.1 21 ftp.sun.ac.za 21 True
+
+# Résultat : [*] Listening on 127.0.0.1:21
+```
+
+### Étape 2 : Se connecter avec un Client FTP
+Ouvrez un **Terminal 2**. Connectez-vous à votre propre machine (localhost).
+
+```bash
+ftp 127.0.0.1
+```
+
+* **Name** : `anonymous`
+* **Password** : `test` (ou n'importe quoi)
+* Une fois connecté (`ftp>`), tapez `ls` pour voir les fichiers distants.
+* Tapez `bye` pour quitter.
+
+### Vérification (Terminal 1)
+Vous devez voir tout l'échange défiler en Hexdump :
+* `[<==] Received X bytes from remote` (La bannière de bienvenue du serveur FTP).
+* `[==>] Sent to remote` (Vos commandes `USER anonymous`, `PASS...`).
+* Le contenu des dossiers listés par `ls`.
+
+---
+
 ## Résumé des Ports Utilisés
 
 | Script | Type | Port |
@@ -134,6 +208,8 @@ BHP:#> whoami
 | TCP_client.py | TCP | 9998 |
 | UDP_client.py | UDP | 9997 |
 | netcat.py | TCP | 5555 (configurable) |
+| proxy.py (TCP) | TCP | 9999 → 9998 |
+| proxy.py (FTP) | TCP | 21 → 21 (remote) |
 
 ---
 
@@ -148,3 +224,4 @@ BHP:#> whoami
 
 **Problème : Permission denied**
 - Sur certains systèmes, les ports < 1024 nécessitent `sudo`
+
