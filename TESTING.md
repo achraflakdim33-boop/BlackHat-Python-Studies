@@ -200,6 +200,52 @@ Vous devez voir tout l'échange défiler en Hexdump :
 
 ---
 
+## 5. 🧪 Le Grand Test (Kicking the Tires)
+
+C'est le moment de jouer à l'attaquant et à la victime sur la même machine.
+
+### 1. Terminal 1 : L'Attaquant (Toi)
+Lance le serveur qui va attendre la connexion de la victime.
+
+```bash
+python3 ssh_server.py
+
+# Résultat attendu : [+] Listening for connection on 0.0.0.0:2222 ...
+```
+
+### 2. Terminal 2 : La Victime (Le Script Piégé)
+Lance le script qui va se connecter à l'attaquant.
+
+```bash
+python3 ssh_rcmd.py
+```
+
+### 3. Interaction : Exécuter des Commandes
+Retournez dans le **Terminal 1** (le serveur). Vous avez maintenant un prompt interactif.
+
+```bash
+Enter command: whoami
+# Le résultat de la commande s'affiche
+
+Enter command: ls
+# Liste des fichiers
+
+Enter command: pwd
+# Répertoire courant
+
+Enter command: exit
+# Ferme la connexion
+```
+
+### Vérification
+* **Terminal 1** : Affiche les résultats des commandes exécutées sur la "victime"
+* **Terminal 2** : Le script continue de tourner et exécute les commandes reçues
+
+### Notes
+⚠️ **Sécurité** : Ce test utilise SSH avec des clés hardcodées dans le code. Ne jamais utiliser en production !
+
+---
+
 ## Résumé des Ports Utilisés
 
 | Script | Type | Port |
@@ -210,6 +256,8 @@ Vous devez voir tout l'échange défiler en Hexdump :
 | netcat.py | TCP | 5555 (configurable) |
 | proxy.py (TCP) | TCP | 9999 → 9998 |
 | proxy.py (FTP) | TCP | 21 → 21 (remote) |
+| ssh_server.py | SSH/TCP | 2222 |
+| ssh_rcmd.py | SSH/TCP | 2222 |
 
 ---
 
@@ -224,4 +272,3 @@ Vous devez voir tout l'échange défiler en Hexdump :
 
 **Problème : Permission denied**
 - Sur certains systèmes, les ports < 1024 nécessitent `sudo`
-
